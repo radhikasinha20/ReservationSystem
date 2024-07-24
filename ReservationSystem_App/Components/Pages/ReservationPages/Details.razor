@@ -1,0 +1,71 @@
+﻿@page "/reservations/details"
+
+@using Microsoft.EntityFrameworkCore
+@using ReservationSystemApp.Models
+@inject IDbContextFactory<ReservationSystem_App.Data.ReservationSystem_AppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h4>Reservation</h4>
+    <hr />
+    @if (reservation is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">ReservationNumber</dt>
+            <dd class="col-sm-10">@reservation.ReservationNumber</dd>
+            <dt class="col-sm-2">PickupDate</dt>
+            <dd class="col-sm-10">@reservation.PickupDate</dd>
+            <dt class="col-sm-2">PickupTime</dt>
+            <dd class="col-sm-10">@reservation.PickupTime</dd>
+            <dt class="col-sm-2">DropoffDate</dt>
+            <dd class="col-sm-10">@reservation.DropoffDate</dd>
+            <dt class="col-sm-2">DropoffTime</dt>
+            <dd class="col-sm-10">@reservation.DropoffTime</dd>
+            <dt class="col-sm-2">PickupLoc</dt>
+            <dd class="col-sm-10">@reservation.PickupLoc</dd>
+            <dt class="col-sm-2">City</dt>
+            <dd class="col-sm-10">@reservation.City</dd>
+            <dt class="col-sm-2">State</dt>
+            <dd class="col-sm-10">@reservation.State</dd>
+            <dt class="col-sm-2">Postal</dt>
+            <dd class="col-sm-10">@reservation.Postal</dd>
+            <dt class="col-sm-2">DropoffLoc</dt>
+            <dd class="col-sm-10">@reservation.DropoffLoc</dd>
+            <dt class="col-sm-2">City_</dt>
+            <dd class="col-sm-10">@reservation.City_</dd>
+            <dt class="col-sm-2">State_</dt>
+            <dd class="col-sm-10">@reservation.State_</dd>
+            <dt class="col-sm-2">Postal_</dt>
+            <dd class="col-sm-10">@reservation.Postal_</dd>
+        </dl>
+        <div>
+            <a href="@($"/reservations/edit?id={reservation.Id}")">Edit</a> |
+            <a href="@($"/reservations")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    Reservation? reservation;
+
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        reservation = await context.Reservation.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (reservation is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

@@ -1,0 +1,130 @@
+﻿@page "/Passengers/edit"
+
+@using Microsoft.EntityFrameworkCore
+@using ReservationSystemApp.Models
+@inject IDbContextFactory<ReservationSystem_App.Data.ReservationSystem_AppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h4>Passenger</h4>
+<hr />
+@if (Passenger is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Passenger" OnValidSubmit="UpdatePassenger" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <input type="hidden" name="Passenger.Id" value="@Passenger.Id" />
+                <div class="mb-3">
+                    <label for="firstname" class="form-label">FirstName:</label>
+                    <InputText id="firstname" @bind-Value="Passenger.FirstName" class="form-control" />
+                    <ValidationMessage For="() => Passenger.FirstName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="lastname" class="form-label">LastName:</label>
+                    <InputText id="lastname" @bind-Value="Passenger.LastName" class="form-control" />
+                    <ValidationMessage For="() => Passenger.LastName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone:</label>
+                    <InputText id="phone" @bind-Value="Passenger.Phone" class="form-control" />
+                    <ValidationMessage For="() => Passenger.Phone" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <InputText id="email" @bind-Value="Passenger.Email" class="form-control" />
+                    <ValidationMessage For="() => Passenger.Email" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="address1" class="form-label">Address1:</label>
+                    <InputText id="address1" @bind-Value="Passenger.Address1" class="form-control" />
+                    <ValidationMessage For="() => Passenger.Address1" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="address2" class="form-label">Address2:</label>
+                    <InputText id="address2" @bind-Value="Passenger.Address2" class="form-control" />
+                    <ValidationMessage For="() => Passenger.Address2" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="city" class="form-label">City:</label>
+                    <InputText id="city" @bind-Value="Passenger.City" class="form-control" />
+                    <ValidationMessage For="() => Passenger.City" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="state" class="form-label">State:</label>
+                    <InputText id="state" @bind-Value="Passenger.State" class="form-control" />
+                    <ValidationMessage For="() => Passenger.State" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="postal" class="form-label">Postal:</label>
+                    <InputNumber id="postal" @bind-Value="Passenger.Postal" class="form-control" />
+                    <ValidationMessage For="() => Passenger.Postal" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/passengers">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    public Passenger? Passenger { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Passenger ??= await context.Passenger.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Passenger is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see https://aka.ms/RazorPagesCRUD.
+    public async Task UpdatePassenger()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Passenger!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!PassengerExists(Passenger!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/passengers");
+    }
+
+    bool PassengerExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Passenger.Any(e => e.Id == id);
+    }
+}

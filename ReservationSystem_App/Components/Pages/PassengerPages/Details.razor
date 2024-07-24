@@ -1,0 +1,63 @@
+﻿@page "/passengers/details"
+
+@using Microsoft.EntityFrameworkCore
+@using ReservationSystemApp.Models
+@inject IDbContextFactory<ReservationSystem_App.Data.ReservationSystem_AppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h4>Passenger</h4>
+    <hr />
+    @if (passenger is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">FirstName</dt>
+            <dd class="col-sm-10">@passenger.FirstName</dd>
+            <dt class="col-sm-2">LastName</dt>
+            <dd class="col-sm-10">@passenger.LastName</dd>
+            <dt class="col-sm-2">Phone</dt>
+            <dd class="col-sm-10">@passenger.Phone</dd>
+            <dt class="col-sm-2">Email</dt>
+            <dd class="col-sm-10">@passenger.Email</dd>
+            <dt class="col-sm-2">Address1</dt>
+            <dd class="col-sm-10">@passenger.Address1</dd>
+            <dt class="col-sm-2">Address2</dt>
+            <dd class="col-sm-10">@passenger.Address2</dd>
+            <dt class="col-sm-2">City</dt>
+            <dd class="col-sm-10">@passenger.City</dd>
+            <dt class="col-sm-2">State</dt>
+            <dd class="col-sm-10">@passenger.State</dd>
+            <dt class="col-sm-2">Postal</dt>
+            <dd class="col-sm-10">@passenger.Postal</dd>
+        </dl>
+        <div>
+            <a href="@($"/passengers/edit?id={passenger.Id}")">Edit</a> |
+            <a href="@($"/passengers")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    Passenger? passenger;
+
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        passenger = await context.Passenger.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (passenger is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

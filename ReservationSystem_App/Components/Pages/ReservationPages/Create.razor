@@ -1,0 +1,106 @@
+﻿@page "/reservations/create"
+
+@using Microsoft.EntityFrameworkCore
+@using ReservationSystemApp.Models
+@inject IDbContextFactory<ReservationSystem_App.Data.ReservationSystem_AppContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h4>Reservation</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Reservation" OnValidSubmit="AddReservation" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+            <div class="mb-3">
+                <label for="reservationnumber" class="form-label">ReservationNumber:</label> 
+                <InputNumber id="reservationnumber" @bind-Value="Reservation.ReservationNumber" class="form-control" /> 
+                <ValidationMessage For="() => Reservation.ReservationNumber" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="pickupdate" class="form-label">PickupDate:</label> 
+                <InputDate id="pickupdate" @bind-Value="Reservation.PickupDate" class="form-control" /> 
+                <ValidationMessage For="() => Reservation.PickupDate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="pickuptime" class="form-label">PickupTime:</label> 
+                <InputText id="pickuptime" @bind-Value="Reservation.PickupTime" class="form-control" /> 
+                <ValidationMessage For="() => Reservation.PickupTime" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="dropoffdate" class="form-label">DropoffDate:</label> 
+                <InputDate id="dropoffdate" @bind-Value="Reservation.DropoffDate" class="form-control" /> 
+                <ValidationMessage For="() => Reservation.DropoffDate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="dropofftime" class="form-label">DropoffTime:</label> 
+                <InputText id="dropofftime" @bind-Value="Reservation.DropoffTime" class="form-control" /> 
+                <ValidationMessage For="() => Reservation.DropoffTime" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="pickuploc" class="form-label">PickupLoc:</label> 
+                <InputText id="pickuploc" @bind-Value="Reservation.PickupLoc" class="form-control" /> 
+                <ValidationMessage For="() => Reservation.PickupLoc" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="city" class="form-label">City:</label> 
+                <InputText id="city" @bind-Value="Reservation.City" class="form-control" /> 
+                <ValidationMessage For="() => Reservation.City" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="state" class="form-label">State:</label> 
+                <InputText id="state" @bind-Value="Reservation.State" class="form-control" /> 
+                <ValidationMessage For="() => Reservation.State" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="postal" class="form-label">Postal:</label> 
+                <InputText id="postal" @bind-Value="Reservation.Postal" class="form-control" /> 
+                <ValidationMessage For="() => Reservation.Postal" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="dropoffloc" class="form-label">DropoffLoc:</label> 
+                <InputText id="dropoffloc" @bind-Value="Reservation.DropoffLoc" class="form-control" /> 
+                <ValidationMessage For="() => Reservation.DropoffLoc" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="city_" class="form-label">City_:</label> 
+                <InputText id="city_" @bind-Value="Reservation.City_" class="form-control" /> 
+                <ValidationMessage For="() => Reservation.City_" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="state_" class="form-label">State_:</label> 
+                <InputText id="state_" @bind-Value="Reservation.State_" class="form-control" /> 
+                <ValidationMessage For="() => Reservation.State_" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="postal_" class="form-label">Postal_:</label> 
+                <InputText id="postal_" @bind-Value="Reservation.Postal_" class="form-control" /> 
+                <ValidationMessage For="() => Reservation.Postal_" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/reservations">Back to List</a>
+</div>
+
+@code {
+
+    [SupplyParameterFromForm]
+    public Reservation Reservation { get; set; } = new();
+
+    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task AddReservation()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Reservation.Add(Reservation);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/reservations");
+    }
+}

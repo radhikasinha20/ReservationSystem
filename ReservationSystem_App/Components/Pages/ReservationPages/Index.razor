@@ -1,0 +1,36 @@
+﻿@page "/reservations"
+
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using ReservationSystemApp.Models
+@inject IDbContextFactory<ReservationSystem_App.Data.ReservationSystem_AppContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="reservations/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="DbFactory.CreateDbContext().Reservation">
+    <PropertyColumn Property="reservation => reservation.ReservationNumber" Title="Reservation Number" />
+    <PropertyColumn Property="reservation => reservation.PickupDate" Title="Pickup Date" Format="MM/dd/yyyy" />
+    <PropertyColumn Property="reservation => reservation.PickupTime" Title="Pickup Time" />
+    <PropertyColumn Property="reservation => reservation.DropoffDate" Title="Dropoff Date" Format="MM/dd/yyyy" />
+    <PropertyColumn Property="reservation => reservation.DropoffTime" Title="Dropoff Time" />
+    <PropertyColumn Property="reservation => reservation.PickupLoc" Title="Pickup Address" />
+    <PropertyColumn Property="reservation => reservation.City" />
+    <PropertyColumn Property="reservation => reservation.State" />
+    <PropertyColumn Property="reservation => reservation.Postal" Title="Postal Code" />
+    <PropertyColumn Property="reservation => reservation.DropoffLoc" Title="Dropoff Address" />
+    <PropertyColumn Property="reservation => reservation.City_" Title="City" />
+    <PropertyColumn Property="reservation => reservation.State_" Title="State" />
+    <PropertyColumn Property="reservation => reservation.Postal_" Title="Postal Code" />
+
+    <TemplateColumn Context="reservation">
+        <a href="@($"reservations/edit?id={reservation.Id}")">Edit</a> |
+        <a href="@($"reservations/details?id={reservation.Id}")">Details</a> |
+        <a href="@($"reservations/delete?id={reservation.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>

@@ -1,0 +1,46 @@
+﻿@page "/passengers"
+
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using ReservationSystemApp.Models
+@inject IDbContextFactory<ReservationSystem_App.Data.ReservationSystem_AppContext> DbFactory
+@rendermode InteractiveServer
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="passengers/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="FilteredPassengers" >
+    <PropertyColumn Property="passenger => passenger.FirstName" Title="First Name" Sortable="true"/>
+        <ColumnOptions>
+            <div>
+                <input type="search" @bind="firstnameFilter" @bind:event="oninput" autofocus/>
+            </div>
+        </ColumnOptions>
+    <PropertyColumn Property="passenger => passenger.LastName" Title="Last Name" />
+    <PropertyColumn Property="passenger => passenger.Phone" />
+    <PropertyColumn Property="passenger => passenger.Email" />
+    <PropertyColumn Property="passenger => passenger.Address1" Title="Address 1" />
+    <PropertyColumn Property="passenger => passenger.Address2" Title="Address 2" />
+    <PropertyColumn Property="passenger => passenger.City" />
+    <PropertyColumn Property="passenger => passenger.State" />
+    <PropertyColumn Property="passenger => passenger.Postal" Title="Postal Code" />
+
+    <TemplateColumn Context="passenger">
+        <a href="@($"passengers/edit?id={passenger.Id}")">Edit</a> |
+        <a href="@($"passengers/details?id={passenger.Id}")">Details</a> |
+        <a href="@($"passengers/delete?id={passenger.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+    @code 
+    {
+    string firstnameFilter = "";
+
+    IQueryable<Passenger> FilteredPassengers => DbFactory.CreateDbContext().Passenger.Where(m => m.FirstName.Contains(firstnameFilter));
+
+    }
